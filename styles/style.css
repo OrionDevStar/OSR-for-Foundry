@@ -1,0 +1,71 @@
+nav.sheet-tabs a {
+    text-align: center;
+}
+
+nav.sheet-tabs a.item.active {
+    text-shadow: 0 0 10px red;
+}
+
+ul.damageTypes li.attribute h4.attribute-name {
+    color: whitesmoke;
+    padding: 2px;
+    margin: 0;
+    border: 1px solid rgba(0, 0, 0, 0.9);
+    background: url(../../../systems/ose/assets/back.png);
+    text-align: center;
+}
+
+ul.resistances {
+    padding: 0;
+}
+
+ul.resistances li {
+    position: relative;
+    border: 1px solid #7a7971;
+    box-shadow: 0 0 2px #7a7971;
+}
+
+ul.resistances h4 {
+    color: whitesmoke;
+    padding: 2px;
+    margin: 0;
+    border: 1px solid rgba(0, 0, 0, 0.9);
+    background: url(../../../systems/ose/assets/back.png);
+    text-align: center;
+}
+
+ul.resistances div {
+    text-align: center;
+    padding: 4px;  
+}
+
+ul.resistances div input {
+    background: none;
+    border: none;
+    border-radius: 0;
+    border-bottom: 1px solid #7a7971;
+}
+
+div.temp {
+    flex: 0 0 55px;
+    position: relative;
+    border: 1px solid #7a7971;
+    box-shadow: 0 0 2px #7a7971;
+}
+
+div.temp div.attribute-value {
+    padding: 4px;
+}
+
+div.temp input {
+    text-align: center;
+}
+
+div.temp h4.attribute-name {
+    color: whitesmoke;
+    padding: 2px;
+    margin: 0;
+    border: 1px solid rgba(0, 0, 0, 0.9);
+    background: url(../../../systems/ose/assets/back.png);
+    text-align: center;
+}

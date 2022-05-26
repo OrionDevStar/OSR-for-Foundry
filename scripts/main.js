@@ -1,0 +1,292 @@
+import { libWrapper } from "../lib/shim.js";
+import {
+  moduleName,
+  localize,
+  getDamageTypes,
+  getResistance,
+  getMultiplier,
+} from "./common.js";
+
+import { rollAttackWrapper } from "./newDamage.js";
+import { itemShowWrapper } from "./spellButtons.js";
+
+import { OSRactorSheet } from "./actorSheet.js";
+import { OSRmonsterSheet } from "./monsterSheet.js";
+import { OSRitemSheet } from "./itemSheet.js";
+
+Hooks.once("init", () => {
+  // Weapon roll new damage calculation
+  libWrapper.register(
+    moduleName,
+    "CONFIG.Actor.documentClass.prototype.rollAttack",
+    rollAttackWrapper,
+    "WRAPPER"
+  );
+
+  // Inject new buttons in spell chat card
+  libWrapper.register(
+    moduleName,
+    "CONFIG.Item.documentClass.prototype.show",
+    itemShowWrapper,
+    "WRAPPER"
+  );
+
+  // Apply damage to temp HP first
+  libWrapper.register(
+    moduleName,
+    "CONFIG.Actor.documentClass.prototype.applyDamage",
+    async function (wrapped, amount = 0, multiplier = 1) {
+      amount = Math.floor(parseInt(amount) * multiplier);
+      const tempHP = parseInt(this.data.data.hp.temp);
+      let remainder = tempHP - amount;
+
+      // Update the Actor
+      await this.update({
+        "data.hp.temp": Math.max(remainder, 0),
+      });
+
+      remainder *= -1;
+      return wrapped(remainder, 1);
+    },
+    "WRAPPER"
+  );
+
+  // Register socket listener
+  game.socket.on(`module.${moduleName}`, async (data) => {
+    if (data.action === "applyDamage") {
+      if (game.user.id !== game.users.find((u) => u.isGM && u.active).id)
+        return;
+
+      const { targetUUID, amount } = data;
+      const token = await fromUuid(targetUUID);
+      const targetActor = token.actor;
+      return targetActor.applyDamage(amount);
+    }
+  });
+});
+
+// Prevent original damage rolls from animating with DSN
+Hooks.on("diceSoNiceRollStart", (messageID, context) => {
+  //console.log(context);
+  const isAttack = ["attack", "melee", "missile"].includes(
+    context.roll?.data.roll?.type
+  );
+  if (isAttack && context.roll.dice[0].faces !== 20) context.blind = true;
+});
+
+// Spell chat card buttons
+Hooks.on("renderChatLog", (app, html, data) => {
+  html[0].addEventListener("click", async (ev) => {
+    if (ev.target.tagName !== "BUTTON") return;
+
+    const button = ev.target;
+    if (
+      !["spell-execute", "spell-damage", "spell-damage-half"].includes ===
+      button.dataset.action
+    )
+      return;
+
+    button.disabled = true;
+
+    const card = button.closest(`.chat-card`);
+    const actor = CONFIG.Item.documentClass._getChatCardActor(card);
+    const item = actor.items.get(card.dataset.itemId);
+
+    if (button.dataset.action === "spell-execute") {
+      const actorMod = actor.data.data.scores[item.data.data.spellMod].mod;
+      const bonus = getSpellBonus(actor, item.data.data.class);
+      const formula = `1d20 + ${actorMod} + ${bonus}`;
+      const flavor = game.i18n.format("OSR.ExecuteSpellDiff", {
+        itemName: item.name,
+        difficulty: item.data.data.lvl || 0,
+        sum: (item.data.data.lvl || 0) + 9,
+      });
+      const title = "Execute Spell";
+
+      const data = {
+        actor: actor,
+        roll: {
+          type: "above",
+          target: item.data.data.lvl + 9,
+        },
+      };
+
+      const roll = new Roll(formula).evaluate({ async: false });
+      let result = {
+        isSuccess: false,
+        isFailure: false,
+        target: data.roll.target,
+        total: roll.total,
+      };
+
+      let die = roll.terms[0].total;
+      if (data.roll.type == "above") {
+        // SAVING THROWS
+        if (roll.total >= result.target) {
+          result.isSuccess = true;
+        } else {
+          result.isFailure = true;
+        }
+      } else if (data.roll.type == "below") {
+        // MORALE, EXPLORATION
+        if (roll.total <= result.target) {
+          result.isSuccess = true;
+        } else {
+          result.isFailure = true;
+        }
+      } else if (data.roll.type == "check") {
+        // SCORE CHECKS (1s and 20s)
+        if (die == 1 || (roll.total <= result.target && die < 20)) {
+          result.isSuccess = true;
+        } else {
+          result.isFailure = true;
+        }
+      } else if (data.roll.type == "table") {
+        // Reaction
+        let table = data.roll.table;
+        let output = Object.values(table)[0];
+        for (let i = 0; i <= roll.total; i++) {
+          if (table[i]) {
+            output = table[i];
+          }
+        }
+        result.details = output;
+      }
+
+      const templateData = {
+        title: title,
+        flavor: flavor,
+        data: data,
+        result: result,
+      };
+
+      let chatData = {
+        user: game.user.id,
+        speaker: ChatMessage.getSpeaker({ actor }),
+      };
+
+      const template = "systems/ose/dist/templates/chat/roll-result.html";
+      return new Promise((resolve) => {
+        roll.render().then((r) => {
+          templateData.rollOSE = r;
+          renderTemplate(template, templateData).then((content) => {
+            chatData.content = content;
+            // Dice So Nice
+            if (game.dice3d) {
+              game.dice3d
+                .showForRoll(roll, game.user, true, false, false)
+                .then((displayed) => {
+                  if (true !== false) ChatMessage.create(chatData);
+                  resolve(roll);
+                });
+            } else {
+              chatData.sound = CONFIG.sounds.dice;
+              if (true !== false) ChatMessage.create(chatData);
+              resolve(roll);
+            }
+          });
+        });
+      });
+    } else {
+      // Get attack damage types; if none, return
+      const damageTypes = getDamageTypes(item.data.data.damageTypes);
+      if (!damageTypes.length) {
+        ui.notifications.warn(localize("NoDamageTypes"));
+        button.disabled = false;
+        return;
+      }
+
+      for (const target of Array.from(game.user.targets)) {
+        // Create roll pool of damage rolls
+        const damageRolls = damageTypes.map((d) => {
+          const roll = new Roll(d.formula);
+          roll.type = d.type;
+          roll.resBreak = d.break;
+          return roll;
+        });
+        const damagePool = PoolTerm.fromRolls(damageRolls);
+        await damagePool.evaluate();
+        //console.log(damagePool)
+
+        const totalDamageRoll = Roll.fromTerms([damagePool]);
+
+        // If DSN, animate damage rolls
+        //if (game.dice3d) await game.dice3d.showForRoll(totalDamageRoll);
+
+        // For each roll in pool, apply resistance calculation
+        const targetActor = target.actor;
+        let totalDamage = 0;
+        for (const damageRoll of damagePool.rolls) {
+          //console.log(damageRoll)
+          const { total, type, resBreak } = damageRoll;
+          const res = getResistance(targetActor, type);
+
+          const multiplier = getMultiplier(res - resBreak);
+          totalDamage += Math.ceil(multiplier * total);
+
+          console.log("------------------------------");
+          console.log(`Damage Type: ${type} | ${total} damage`);
+          console.log(
+            `Resistance: ${res} - ${resBreak} = ${
+              res - resBreak
+            } -> ${multiplier}x multiplier`
+          );
+          console.log(
+            `${total} x ${multiplier} = ${
+              multiplier * total
+            } (round to ${Math.ceil(multiplier * total)})`
+          );
+          console.log(`Running Total Damage: ${totalDamage}`);
+        }
+        console.log("------------------------------");
+
+        if (button.dataset.action === "spell-damage-half") {
+          console.log(`Half Damage`);
+          totalDamage = Math.floor(totalDamage / 2);
+        }
+
+        console.log(`Final Damage: ${totalDamage}`);
+
+        const flavor = `${item.name} ${
+          button.dataset.action === "spell-damage-half"
+            ? localize("HalfDamage")
+            : localize("Damage")
+        }`;
+        await totalDamageRoll.toMessage({
+          speaker: ChatMessage.getSpeaker({ actor }),
+          flavor,
+        });
+
+        if (game.user.isGM) target.actor.applyDamage(totalDamage);
+        else {
+          game.socket.emit(`module.${moduleName}`, {
+            action: "applyDamage",
+            targetUUID: target.document.uuid,
+            amount: totalDamage,
+          });
+        }
+      }
+    }
+
+    button.disabled = false;
+  });
+
+  function getSpellBonus(actor, bonusLabel) {
+    const spellBonusData = actor.getFlag(moduleName, "spellBonusData");
+
+    for (const spellBonus of Object.values(spellBonusData)) {
+      if (spellBonus.label === bonusLabel) return spellBonus.value;
+    }
+
+    return 0;
+  }
+});
+
+// Character sheet changes
+Hooks.on("renderOseActorSheetCharacter", OSRactorSheet);
+
+// Monster sheet changes
+Hooks.on("renderOseActorSheetMonster", OSRmonsterSheet);
+
+// Item sheet changes
+Hooks.on("renderOseItemSheet", OSRitemSheet);

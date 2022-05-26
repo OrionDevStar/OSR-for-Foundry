@@ -1,0 +1,33 @@
+{"OSR": {
+
+    "Insanity": "Insanity",
+    "Ethos": "Ethos",
+    "Specialization": "Specialization",
+    "Size": "Size",
+    "Intelligence": "Intelligence",
+
+    "TempHP": "Temp HP",
+    "Defense": "Defense",
+
+    "Critical": "[Critical]",
+
+
+
+    "Resistances": "Resistances",
+
+    "Light": "Light",
+    "Medium": "Medium",
+    "Heavy": "Heavy",
+
+    "SpellBonus": "Spell Bonus",
+    "NewSpellBonus": "New Spell Bonus",
+    "Damage": "Damage",
+    "HalfDamage": "Half Damage",
+    "Difficulty": "Difficulty",
+    "School": "School",
+    "Weight": "Weight",
+
+    "Mod": "Mod",
+    "ExecuteSpell": "Execute Spell",
+    "ExecuteSpellDiff": "Execute Spell: {itemName} (Difficulty: 9 + {difficulty} = {sum})"
+}}
