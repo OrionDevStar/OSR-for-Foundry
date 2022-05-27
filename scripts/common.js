@@ -19,11 +19,19 @@ export function createResistanceElement(actorData, elementType) {
     resistances.style = "flex: unset; max-height: 35px;";
     let resistancesInnerHTML = `<h2 style="font-size:1em;">${localize("Resistances")}</h2><ul class="attributes flexrow resistances">`;
     for (const type of damageTypes) {
+        const value = actorData.type !== "character" 
+            ? (actorData.data.resistance?.[type] || 0)
+            : actorData.items
+            .filter(i => i.type === "armor" && i.data.equipped)
+            .reduce((acc, current) => {
+                return acc + current.data.resistance?.[type] || 0;
+            }, 0); 
+            
         resistancesInnerHTML += `
             <li class="attribute flexcol">
                 <h4 class="attribute-name box-title">${type}</h4>
                 <div class="attribute-value">
-                    <input name="data.resistance.${type}" type="text" value="${actorData.data.resistance?.[type] || 0}" data-dtype="Number">
+                    <input name="data.resistance.${type}" type="text" value="${value}" data-dtype="Number" ${actorData.type === "character" ? "disabled" : ""}>
                 </div>
             </li>
         `
