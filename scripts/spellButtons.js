@@ -1,9 +1,9 @@
-import { localize } from "./common.js";
+import { localize, getDamageTypes } from "./common.js";
 
 export async function itemShowWrapper(wrapped) {
     if (this.type === "spell") {
         Hooks.once("preCreateChatMessage", (message, data, options, userID) => {
-            //console.log({ message, data })
+            console.log({ message, data })
             const contentHTML = new DOMParser().parseFromString(data.content, "text/html");
 
             // Execute button
@@ -11,7 +11,9 @@ export async function itemShowWrapper(wrapped) {
             executeButton.classList.add("card-buttons");
             executeButton.innerHTML = `<button data-action="spell-execute">${localize("ExecuteSpell")}</button>`;
             contentHTML.querySelector(`footer`).before(executeButton);
-
+  
+            const damageTypes = getDamageTypes(data.item.data.damageTypes);
+            if (damageTypes.length) {
             // Damage button
             const damageButton = document.createElement("div");
             damageButton.classList.add("card-buttons");
@@ -23,7 +25,7 @@ export async function itemShowWrapper(wrapped) {
             halfDamageButton.classList.add("card-buttons");
             halfDamageButton.innerHTML = `<button data-action="spell-damage-half">${localize("HalfDamage")}</button>`;
             contentHTML.querySelector(`footer`).before(halfDamageButton);
-
+            }
             message.data.update({
                 content: contentHTML.body.innerHTML
             });
