@@ -252,9 +252,18 @@ Hooks.on("renderChatLog", (app, html, data) => {
             ? localize("HalfDamage")
             : localize("Damage")
         }`;
-        await totalDamageRoll.toMessage({
-          speaker: ChatMessage.getSpeaker({ actor }),
-          flavor,
+
+        const rollHTMLString = await totalDamageRoll.render();
+        const rollHTML = new DOMParser().parseFromString(rollHTMLString, "text/html");
+        rollHTML.querySelector(`h4.dice-total`).innerText = totalDamage;
+        rollHTML.querySelector(`h4.dice-total`).style.color = "blue";
+        
+        await ChatMessage.create({
+            speaker: ChatMessage.getSpeaker({ actor }),
+            flavor,
+            content: rollHTML.body.innerHTML,
+            type: 5,
+            roll: totalDamageRoll
         });
 
         if (game.user.isGM) target.actor.applyDamage(totalDamage);

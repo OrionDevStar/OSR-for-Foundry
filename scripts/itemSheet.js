@@ -88,7 +88,7 @@ export function OSRitemSheet(app, html, data) {
             html[0].querySelector(`input[name="data.aac.value"]`).closest(`div.form-group`).remove();
 
             // Remove Wgt. field
-            html[0].querySelector(`input[name="data.weight"]`).closest(`div.form-group`).remove();
+            //html[0].querySelector(`input[name="data.weight"]`).closest(`div.form-group`).remove();
 
             // Add encumbrance weight class
             html[0].querySelector(`input[name="data.cost"]`).closest(`div.form-group`).after(encumbranceClass);
