@@ -44,10 +44,10 @@ export function createResistanceElement(actorData, elementType) {
 
 export function createSpellBonusArchitecture(app, html, data) {
     // Remove slots
-    html[0].querySelectorAll(`div.tab[data-tab="spells"] div.item-category-title`).forEach(n => {
+    html[0].querySelectorAll(`div.tab[data-tab="spells"]`).forEach(n => {
         console.log(n)
-        n.querySelector(`div.field-short`)?.remove();
-        n.querySelector(`div.field-long`)?.remove();
+        n.querySelectorAll(`div.field-short`).forEach(n => n.remove());
+        n.querySelectorAll(`div.field-long`).forEach(n => n.remove());
     });
     html[0].querySelectorAll(`div.memorize`).forEach(n => n.remove());
 
