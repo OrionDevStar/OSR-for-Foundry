@@ -43,6 +43,14 @@ export function createResistanceElement(actorData, elementType) {
 }
 
 export function createSpellBonusArchitecture(app, html, data) {
+    // Remove slots
+    html[0].querySelectorAll(`div.tab[data-tab="spells"] div.item-category-title`).forEach(n => {
+        console.log(n)
+        n.querySelector(`div.field-short`)?.remove();
+        n.querySelector(`div.field-long`)?.remove();
+    });
+    html[0].querySelectorAll(`div.memorize`).forEach(n => n.remove());
+
     const spellBonusHeader = document.createElement("div");
     spellBonusHeader.classList.add("item-category-title", "spellBonusHeader", "flexrow");
     spellBonusHeader.style = "line-height: 15px;";
