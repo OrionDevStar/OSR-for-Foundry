@@ -44,9 +44,9 @@ export function createResistanceElement(actorData, elementType) {
 
 export function createSpellBonusArchitecture(app, html, data) {
     // Remove slots
-    html[0].querySelectorAll(`div.tab[data-tab="spells"] div.item-category-title`).forEach(n => {
-        n.querySelector(`div.field-short`)?.remove();
-        n.querySelector(`div.field-long`)?.remove();
+    html[0].querySelectorAll(`div.tab[data-tab="spells"]`).forEach(n => {
+        n.querySelectorAll(`div.field-short`).forEach(n => n.remove());
+        n.querySelectorAll(`div.field-long`).forEach(n => n.remove());
     });
     html[0].querySelectorAll(`div.memorize`).forEach(n => n.remove());
 
@@ -54,10 +54,11 @@ export function createSpellBonusArchitecture(app, html, data) {
     spellBonusHeader.classList.add("item-category-title", "spellBonusHeader", "flexrow");
     spellBonusHeader.style = "line-height: 15px;";
     spellBonusHeader.innerHTML = `
-        <div class="category-caret"><i class="fas fa-caret-down"></i></div>
-        <div class="category-name">${localize("SpellBonus")}</div>
-        <div class="item-controls">
-            <a class="item-control item-create" data-type="spell-bonus" title="${localize("Add")}"><i class="fa fa-plus"></i></a>
+        <div class="item-titles flexrow">
+            <div class="category-name">${localize("SpellBonus")}</div>
+            <div class="item-controls">
+                <a class="item-control item-create" data-type="spell-bonus" title="${localize("Add")}"><i class="fa fa-plus"></i></a>
+            </div>
         </div>
     `;
     spellBonusHeader.querySelector(`a.item-control[data-type="spell-bonus"]`).addEventListener("click", ev => createNewSpellBonus(ev, app.object));
