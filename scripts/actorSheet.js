@@ -30,7 +30,19 @@ export function OSRactorSheet (app, html, data) {
             <input name="data.hp.defense" type="text" value="${data.data.hp.defense ?? 0}" placeholder="" data-type="String">
         </div>
     `;
+    defenseElement.addEventListener("click", ev => {
+        if (app.object.token.combatant) {
+            const actor = app.object;
+            return actor.setFlag(moduleName, "defenseApplied", true);
+        }
+    });
     html[0].querySelector(`li.attribute.hit-dice`).after(defenseElement);
+
+    // Visually update AC if defenseApplied flag is set
+    if (data.flags[moduleName]?.defenseApplied) {
+        const acValue = html[0].querySelector(`div.health.armor-class div.health-top`).innerText;
+        html[0].querySelector(`div.health.armor-class div.health-top`).innerText = parseInt(acValue) - parseInt(data.data.hp.defense ?? 0);
+    }
 
     // Label changes
     const titleLabel = html[0].querySelector(`input[name="data.details.title"]`)?.nextElementSibling;

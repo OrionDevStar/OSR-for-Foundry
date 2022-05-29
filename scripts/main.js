@@ -291,6 +291,22 @@ Hooks.on("renderChatLog", (app, html, data) => {
   }
 });
 
+// Reset defense
+Hooks.on("preDeleteCombat", async (combat, options, userID) => {
+    for (const combatant of combat.combatants.contents) await combatant.actor.unsetFlag(moduleName, "defenseApplied");
+});
+
+Hooks.on("updateCombat", async (combat, diff, options, userID) => {
+    if (game.user.id !== game.users.find(u => u.active && u.isGM).id) return;
+    if (!foundry.utils.hasProperty(diff, round)) return;
+
+    for (const combatant of combat.combatants.contents) await combatant.actor.unsetFlag(moduleName, "defenseApplied");
+});
+
+Hooks.on("preDeleteCombatant", (combatant, options, userID) => {
+    return combatant.actor.unsetFlag(moduleName, "defenseApplied");
+});
+
 // Character sheet changes
 Hooks.on("renderOseActorSheetCharacter", OSRactorSheet);
 
