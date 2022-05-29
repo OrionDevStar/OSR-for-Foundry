@@ -56,7 +56,9 @@ export function OSRactorSheet (app, html, data) {
     app.setPosition({ height: 600 });
 
     // Calculate weight and override Ex value;
-    const totalWeight = data.items.reduce((acc, current) => acc + parseFloat(current.data.weightClass || "0"), 0);
+   
+    const totalWeight = data.items.reduce((acc, current) => acc + (current.data.equipped == true ? parseFloat(current.data.weightClass || "0") : 0), 0);
+    console.log(totalWeight);
     const movement = calculateMovement(totalWeight);
     const movementSpan = document.createElement("span");
     movementSpan.style = `border-bottom: 1px solid #7a7971;`;

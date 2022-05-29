@@ -1,7 +1,7 @@
 export const moduleName = "osr-for-foundry";
 
 export const damageTypes = [
-    "Piercing",
+    "Cut",
     "Slashing",
     "Concussion",
     "Fire",
