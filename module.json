@@ -21,5 +21,37 @@
             "path": "lang/en.json"
         }
     ],
+	 "packs": [
+		{
+		  "name": "armadura",
+		  "label": "Armadura",
+		  "path": "/packs/armadura.db",
+		  "entity": "Item"
+		},	
+		{
+		  "name": "armas",
+		  "label": "Armas",
+		  "path": "/packs/armas.db",
+		  "entity": "Item"
+		},	
+		{
+		  "name": "escudos",
+		  "label": "Escudos",
+		  "path": "/packs/escudos.db",
+		  "entity": "Item"
+		},
+		{
+		  "name": "itens-diversos",
+		  "label": "Itens Diversos",
+		  "path": "/packs/itens-diversos.db",
+		  "entity": "Item"
+		},
+		{
+		  "name": "especialidades",
+		  "label": "Especialidades",
+		  "path": "/packs/especialidades.db",
+		  "entity": "Actor"
+		}
+	],
     "compatibleCoreVersion": "9"
 }

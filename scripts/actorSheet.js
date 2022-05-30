@@ -31,7 +31,8 @@ export function OSRactorSheet (app, html, data) {
         </div>
     `;
     defenseElement.addEventListener("click", ev => {
-        if (app.object.token.combatant) {
+        console.log(app.object.token);
+        if (true/* there is no info about the combatant in the app object app.object.token.combatant*/) {
             const actor = app.object;
             return actor.setFlag(moduleName, "defenseApplied", true);
         }
@@ -72,8 +73,8 @@ export function OSRactorSheet (app, html, data) {
 }
 
 function calculateMovement(weight) {
-    if (weight > 3) return 9;
-    else if (weight > 2) return 18;
-    else if (weight > 1) return 27;
+    if (weight >= 3) return 9;
+    else if (weight >= 2) return 18;
+    else if (weight >= 1) return 27;
     else return 36;
 }
