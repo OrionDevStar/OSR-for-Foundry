@@ -31,7 +31,8 @@ export function OSRactorSheet (app, html, data) {
         </div>
     `;
     defenseElement.addEventListener("click", ev => {
-        if (app.object.token.combatant) {
+        const token = app.object.getActiveTokens()[0]?.document;
+        if (token.combatant) {
             const actor = app.object;
             return actor.setFlag(moduleName, "defenseApplied", true);
         }
