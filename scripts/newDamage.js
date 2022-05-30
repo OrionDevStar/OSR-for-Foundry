@@ -5,7 +5,6 @@ export function rollAttackWrapper(wrapped, attData, options) {
     // Intercept attack rolls that hit and inject custom damage rolls and calculation
     Hooks.once("preCreateChatMessage", (message, data, options, userID) => {
         if (data.flags?.ose?.roll !== "attack") return;
-        //console.log({ message, data });
 
         const contentHTML = new DOMParser().parseFromString(data.content, "text/html");
         // If attack has no damage, return
@@ -69,6 +68,7 @@ export function rollAttackWrapper(wrapped, attData, options) {
             contentHTML.querySelector(`div.damage-roll`).innerHTML = await totalDamageRoll.render();
             contentHTML.querySelector(`div.damage-roll h4.dice-total`).innerText = totalDamage;
             contentHTML.querySelector(`div.damage-roll h4.dice-total`).style.color = "blue";
+
 
             // If DSN, animate damage rolls
             if (game.dice3d) await game.dice3d.showForRoll(totalDamageRoll);

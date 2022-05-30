@@ -73,8 +73,8 @@ export function OSRactorSheet (app, html, data) {
 }
 
 function calculateMovement(weight) {
-    if (weight > 3) return 9;
-    else if (weight > 2) return 18;
-    else if (weight > 1) return 27;
+    if (weight >= 3) return 9;
+    else if (weight >= 2) return 18;
+    else if (weight >= 1) return 27;
     else return 36;
 }
