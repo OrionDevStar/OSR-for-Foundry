@@ -56,13 +56,16 @@ Hooks.once("init", () => {
     moduleName,
     "CONFIG.Actor.documentClass.prototype._calculateMovement",
     function () {
-      const weight = this.items.reduce((acc, current) => (current.data.equipped == true ? acc + parseFloat(current.data.weightClass || "0") : 0), 0);
+      const weight = this.items
+        .filter(i => i.data.data.equipped)
+        .reduce((acc, current) => (acc + parseFloat(current.data.data.weightClass)), 0);
 
-      if (weight >= 3) return 9;
-      else if (weight >= 2) return 18;
-      else if (weight >= 1) return 27;
-      else return 36;
-  
+      let movement = 36;
+      if (weight >= 3) movement = 9;
+      else if (weight >= 2) movement = 18;
+      else if (weight >= 1) movement = 27;
+
+      this.data.data.movement.base = movement;
     },
     "OVERRIDE"
   );
