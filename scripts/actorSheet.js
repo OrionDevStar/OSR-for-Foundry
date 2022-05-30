@@ -67,15 +67,6 @@ export function OSRactorSheet (app, html, data) {
     app.setPosition({ width: 540 });
     app.setPosition({ height: 600 });
 
-    // Calculate weight and override Ex value;
-    const totalWeight = data.items.reduce((acc, current) => acc + parseFloat(current.data.weightClass || "0"), 0);
-    const movement = calculateMovement(totalWeight);
-    const movementSpan = document.createElement("span");
-    movementSpan.style = `border-bottom: 1px solid #7a7971;`;
-    movementSpan.innerHTML = movement;
-    html[0].querySelector(`input[name="data.movement.base"]`).closest(`div.attribute-value`).append(movementSpan);
-    html[0].querySelector(`input[name="data.movement.base"]`).remove();
-
     // Add custom spell bonus architecture
     if (html[0].querySelector(`div.tab[data-tab="spells"]`)) createSpellBonusArchitecture(app, html, data);
 }
