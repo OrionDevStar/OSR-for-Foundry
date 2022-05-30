@@ -298,7 +298,7 @@ Hooks.on("preDeleteCombat", async (combat, options, userID) => {
 
 Hooks.on("updateCombat", async (combat, diff, options, userID) => {
     if (game.user.id !== game.users.find(u => u.active && u.isGM).id) return;
-    if (!foundry.utils.hasProperty(diff, round)) return;
+    if (!foundry.utils.hasProperty(diff, "round")) return;
 
     for (const combatant of combat.combatants.contents) await combatant.actor.unsetFlag(moduleName, "defenseApplied");
 });

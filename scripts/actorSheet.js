@@ -31,7 +31,8 @@ export function OSRactorSheet (app, html, data) {
         </div>
     `;
     defenseElement.addEventListener("click", ev => {
-        if (app.object.token.combatant) {
+        console.log(app.object.token);
+        if (true/* there is no info about the combatant in the app object app.object.token.combatant*/) {
             const actor = app.object;
             return actor.setFlag(moduleName, "defenseApplied", true);
         }
@@ -68,23 +69,20 @@ export function OSRactorSheet (app, html, data) {
     app.setPosition({ height: 600 });
 
     // Calculate weight and override Ex value;
-   
     const totalWeight = data.items.reduce((acc, current) => acc + (current.data.equipped == true ? parseFloat(current.data.weightClass || "0") : 0), 0);
-    console.log(totalWeight);
     const movement = calculateMovement(totalWeight);
     const movementSpan = document.createElement("span");
     movementSpan.style = `border-bottom: 1px solid #7a7971;`;
     movementSpan.innerHTML = movement;
     html[0].querySelector(`input[name="data.movement.base"]`).closest(`div.attribute-value`).append(movementSpan);
     html[0].querySelector(`input[name="data.movement.base"]`).remove();
-
     // Add custom spell bonus architecture
     if (html[0].querySelector(`div.tab[data-tab="spells"]`)) createSpellBonusArchitecture(app, html, data);
 }
 
 function calculateMovement(weight) {
-    if (weight > 3) return 9;
-    else if (weight > 2) return 18;
-    else if (weight > 1) return 27;
+    if (weight >= 3) return 9;
+    else if (weight >= 2) return 18;
+    else if (weight >= 1) return 27;
     else return 36;
 }
