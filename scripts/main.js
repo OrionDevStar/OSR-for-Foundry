@@ -51,6 +51,22 @@ Hooks.once("init", () => {
     "WRAPPER"
   );
 
+  // Override movement calculation
+  libWrapper.register(
+    moduleName,
+    "CONFIG.Actor.documentClass.prototype._calculateMovement",
+    function () {
+      const weight = this.items.reduce((acc, current) => acc + parseFloat(current.data.weightClass || "0"), 0);
+
+      if (weight > 3) return 9;
+      else if (weight > 2) return 18;
+      else if (weight > 1) return 27;
+      else return 36;
+  
+    },
+    "OVERRIDE"
+  );
+
   // Register socket listener
   game.socket.on(`module.${moduleName}`, async (data) => {
     if (data.action === "applyDamage") {
