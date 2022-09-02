@@ -1,8 +1,8 @@
 export const moduleName = "osr-for-foundry";
 
 export const damageTypes = [
-    "Piercing",
     "Slashing",
+    "Piercing",
     "Concussion",
     "Fire",
     "Ice",
@@ -150,14 +150,16 @@ export function getResistance(targetActor, damageType) {
 
 export function getMultiplier(res) {
     if (res >= 4) return 0;
-    else if (res <= -2) return 2;
+    else if (res <= -4) return 2;
 
     const map = {
         3: 0.25,
         2: 0.5,
         1: 0.75,
         0: 1,
-        "-1": 1.5
+        "-1": 1.25,
+        "-2": 1.5,
+        "-3": 1.75
     };
 
     return map[res];

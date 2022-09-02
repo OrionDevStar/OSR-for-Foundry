@@ -1,34 +1,38 @@
 {"OSR": {
 
-    "Insanity": "Insanity",
+    "Insanity": "Insanidade",
     "Ethos": "Ethos",
-    "Specialization": "Specialization",
-    "Size": "Size",
-    "Intelligence": "Intelligence",
+    "Specialization": "Especialização",
+    "Size": "Tamanho e Força",
+    "Intelligence": "Insteligência",
 
-    "TempHP": "Temp HP",
-    "Defense": "Defense",
+    "TempHP": "Fôlego Temp.",
+    "Defense": "Defesa",
+    "Ferimentos": "F. Nor.",
+    "FerimentosLeves": "F. Leve",
+    "FerimentosArmadura": "F Arm.",
+    
 
-    "Critical": "[Critical]",
-    "CriticalMiss": "[Critical Miss]",
+    "Critical": "[Crítico]",
+    "CriticalMiss": "[Falha Crítica]",
 
 
 
-    "Resistances": "Resistances",
+    "Resistances": "Resistências",
 
-    "Light": "Light",
-    "Medium": "Medium",
-    "Heavy": "Heavy",
+    "Light": "Leve",
+    "Medium": "Médio",
+    "Heavy": "Pesado",
 
-    "SpellBonus": "Spell Bonus",
-    "NewSpellBonus": "New Spell Bonus",
-    "Damage": "Damage",
-    "HalfDamage": "Half Damage",
-    "Difficulty": "Difficulty",
-    "School": "School",
-    "Weight": "Weight",
+    "SpellBonus": "Bônus de Spell",
+    "NewSpellBonus": "Novo Bônus de Spell",
+    "Damage": "Dano",
+    "HalfDamage": "Metade do Dano",
+    "Difficulty": "Dificuldade",
+    "School": "Escola",
+    "Weight": "Peso",
 
     "Mod": "Mod",
-    "ExecuteSpell": "Execute Spell",
-    "ExecuteSpellDiff": "Execute Spell: {itemName} (Difficulty: 9 + {difficulty} = {sum})"
+    "ExecuteSpell": "Executar Magia",
+    "ExecuteSpellDiff": "Executar Magia: {itemName} (Dificuldade: 9 + {difficulty} = {sum})"
 }}

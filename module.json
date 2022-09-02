@@ -26,31 +26,43 @@
 		  "name": "armadura",
 		  "label": "Armadura",
 		  "path": "/packs/armadura.db",
-		  "entity": "Item"
+		  "entity": "Item",
+		  "system": "OSE"
 		},	
 		{
 		  "name": "armas",
 		  "label": "Armas",
 		  "path": "/packs/armas.db",
-		  "entity": "Item"
+		  "entity": "Item",
+		  "system": "OSE"
 		},	
 		{
 		  "name": "escudos",
 		  "label": "Escudos",
 		  "path": "/packs/escudos.db",
-		  "entity": "Item"
+		  "entity": "Item",
+		  "system": "OSE"
 		},
 		{
 		  "name": "itens-diversos",
 		  "label": "Itens Diversos",
 		  "path": "/packs/itens-diversos.db",
-		  "entity": "Item"
+		  "entity": "Item",
+		  "system": "OSE"
 		},
 		{
 		  "name": "especialidades",
 		  "label": "Especialidades",
 		  "path": "/packs/especialidades.db",
-		  "entity": "Actor"
+		  "entity": "Actor",
+		  "system": "OSE"
+		},
+		{
+		  "name": "criaturas",
+		  "label": "Criaturas",
+		  "path": "/packs/criaturas.db",
+		  "entity": "Actor",
+		  "system": "OSE"
 		}
 	],
     "compatibleCoreVersion": "9"

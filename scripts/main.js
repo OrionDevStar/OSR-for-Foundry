@@ -37,7 +37,8 @@ Hooks.once("init", () => {
     "CONFIG.Actor.documentClass.prototype.applyDamage",
     async function (wrapped, amount = 0, multiplier = 1) {
       amount = Math.floor(parseInt(amount) * multiplier);
-      const tempHP = parseInt(this.data.data.hp.temp);
+      let tempHP = parseInt(this.data.data.hp.temp);
+      if(isNaN(tempHP)) tempHP = 0;
       let remainder = tempHP - amount;
 
       // Update the Actor
@@ -112,7 +113,12 @@ Hooks.on("renderChatLog", (app, html, data) => {
     const item = actor.items.get(card.dataset.itemId);
 
     if (button.dataset.action === "spell-execute") {
-      const actorMod = actor.data.data.scores[item.data.data.spellMod].mod;
+      let actorMod
+      try {
+        actorMod = actor.data.data.scores[item.data.data.spellMod].mod;
+      } catch (error) {
+        actorMod = 0;
+      }
       const bonus = getSpellBonus(actor, item.data.data.class);
       const formula = `1d20 + ${actorMod} + ${bonus}`;
       const flavor = game.i18n.format("OSR.ExecuteSpellDiff", {
@@ -235,13 +241,22 @@ Hooks.on("renderChatLog", (app, html, data) => {
         // For each roll in pool, apply resistance calculation
         const targetActor = target.actor;
         let totalDamage = 0;
+        let DamageMsg = "";
         for (const damageRoll of damagePool.rolls) {
           //console.log(damageRoll)
           const { total, type, resBreak } = damageRoll;
           const res = getResistance(targetActor, type);
 
           const multiplier = getMultiplier(res - resBreak);
-          totalDamage += Math.ceil(multiplier * total);
+          let damageHelp = Math.ceil(multiplier * total);
+
+          if (button.dataset.action === "spell-damage-half") {
+            console.log(`Half Damage`);
+            damageHelp = Math.floor(damageHelp / 2);
+          }
+
+          DamageMsg += type+": "+damageHelp+" ";
+          totalDamage += damageHelp;
 
           console.log("------------------------------");
           console.log(`Damage Type: ${type} | ${total} damage`);
@@ -259,10 +274,7 @@ Hooks.on("renderChatLog", (app, html, data) => {
         }
         console.log("------------------------------");
 
-        if (button.dataset.action === "spell-damage-half") {
-          console.log(`Half Damage`);
-          totalDamage = Math.floor(totalDamage / 2);
-        }
+
 
         console.log(`Final Damage: ${totalDamage}`);
 
@@ -274,7 +286,7 @@ Hooks.on("renderChatLog", (app, html, data) => {
 
         const rollHTMLString = await totalDamageRoll.render();
         const rollHTML = new DOMParser().parseFromString(rollHTMLString, "text/html");
-        rollHTML.querySelector(`h4.dice-total`).innerText = totalDamage;
+        rollHTML.querySelector(`h4.dice-total`).innerText = DamageMsg;
         rollHTML.querySelector(`h4.dice-total`).style.color = "blue";
         
         await ChatMessage.create({

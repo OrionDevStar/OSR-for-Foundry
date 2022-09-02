@@ -17,11 +17,11 @@ export function OSRactorSheet (app, html, data) {
             <input name="data.hp.temp" type="text" value="${data.data.hp.temp || 0}" data-type="String">
         </div>
     `;
-    html[0].querySelector(`div.health`).after(tempHPelement);
+    html[0].querySelector(`div.health`).after(tempHPelement); 
 
     // Add Defense value
     const defenseElement = document.createElement("li");
-    defenseElement.classList.add("attribute", "hit-dice");
+    defenseElement.classList.add("attribute", "defense");
     defenseElement.innerHTML = `
         <h4 class="attribute-name box-title" title="${localize("Defense")}">
             <a>${localize("Defense")}</a>
@@ -38,6 +38,48 @@ export function OSRactorSheet (app, html, data) {
         }
     });
     html[0].querySelector(`li.attribute.hit-dice`).after(defenseElement);
+
+    // Add FerimentoArmadura value
+    const ferimentoArmoElement = document.createElement("li");
+    ferimentoArmoElement.classList.add("attribute", "ferimentosarmor");
+    ferimentoArmoElement.innerHTML = `
+        <h4 class="attribute-name box-title" title="${localize("FerimentosArmadura")}">
+            <a>${localize("FerimentosArmadura")}</a>
+        </h4>
+        <div class="attribute-value">
+            <input name="data.hp.ferimentosarmor" type="text" value="${data.data.hp.ferimentosarmor ?? 0}" placeholder="" data-type="String">
+        </div>
+    `;      
+    html[0].querySelector(`li.attribute.hit-dice`).after(ferimentoArmoElement);       
+
+    // Add FerimentoLeve value
+    const ferimentoLeveElement = document.createElement("li");
+    ferimentoLeveElement.classList.add("attribute", "ferimentosleves");
+    ferimentoLeveElement.innerHTML = `
+        <h4 class="attribute-name box-title" title="${localize("FerimentosLeves")}">
+            <a>${localize("FerimentosLeves")}</a>
+        </h4>
+        <div class="attribute-value">
+            <input name="data.hp.ferimentosleves" type="text" value="${data.data.hp.ferimentosleves ?? 0}" placeholder="" data-type="String">
+        </div>
+    `;  
+    html[0].querySelector(`li.attribute.hit-dice`).after(ferimentoLeveElement);
+
+    // Add Ferimento value
+    const ferimentoElement = document.createElement("li");
+    ferimentoElement.classList.add("attribute", "ferimentos");
+    ferimentoElement.innerHTML = `
+        <h4 class="attribute-name box-title" title="${localize("Ferimentos")}">
+            <a>${localize("Ferimentos")}</a>
+        </h4>
+        <div class="attribute-value">
+            <input name="data.hp.ferimentos" type="text" value="${data.data.hp.ferimentos ?? 0}" placeholder="" data-type="String">
+        </div>
+    `;       
+    html[0].querySelector(`li.attribute.hit-dice`).after(ferimentoElement);    
+    
+    // Remove hit-dice save
+    //html[0].querySelector(`li.attribute.hit-dice`).remove();
 
     // Visually update AC if defenseApplied flag is set
     if (data.flags[moduleName]?.defenseApplied) {
@@ -57,7 +99,7 @@ export function OSRactorSheet (app, html, data) {
 
     // Add resistances
     const resistancesDiv = createResistanceElement(data, "div");
-    html[0].querySelector(`section.attributes-tab`).append(resistancesDiv);
+    html[0].querySelector(`section.attributes-tab`).append(resistancesDiv); 
 
     // Remove exploration abilities
     html[0].querySelector(`ul.attributes.exploration`).remove();
